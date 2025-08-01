@@ -2,7 +2,7 @@ import { Component, inject } from '@angular/core';
 
 import { AvailablePlacesComponent } from './places/available-places/available-places.component';
 import { UserPlacesComponent } from './places/user-places/user-places.component';
-import { HttpClient } from '@angular/common/http';
+
 
 @Component({
   selector: 'app-root',
@@ -13,5 +13,4 @@ import { HttpClient } from '@angular/common/http';
 })
 export class AppComponent 
 {
-  private httpClient= inject(HttpClient);
 }
