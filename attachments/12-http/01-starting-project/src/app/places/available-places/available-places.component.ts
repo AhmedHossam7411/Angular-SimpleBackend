@@ -4,8 +4,8 @@ import { Place } from '../place.model';
 import { PlacesComponent } from '../places.component';
 import { PlacesContainerComponent } from '../places-container/places-container.component';
 import { PlacesService } from '../places.service';
-import { OnInit } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+// import { OnInit } from '@angular/core';
+// import { HttpClient } from '@angular/common/http';
 
 
 @Component({
@@ -20,7 +20,7 @@ export class AvailablePlacesComponent {
   places = signal<Place[] | undefined>(undefined);
   isFetching = signal(false); // Signal to track fetching state
   error = signal(''); // Signal to track any error that occurs
-  private httpClient= inject(HttpClient);  // Injecting HttpClient for making HTTP requests
+  // private httpClient= inject(HttpClient);  // Injecting HttpClient for making HTTP requests
   private destroyRef = inject(DestroyRef); // Injecting DestroyRef to manage component lifecycle
   private placesService = inject(PlacesService); // Injecting PlacesService to access places data
   ngOnInit() // Lifecycle hook to fetch places when the component initializes
@@ -51,10 +51,14 @@ export class AvailablePlacesComponent {
 
   onSelectPlace(selectedPlace: Place)
   {
-       this.httpClient.put('http://localhost:3000/user-places', {
-        placeId: selectedPlace.id
-      }).subscribe({
+       const subscription=this.placesService.addPlaceToUserPlaces(selectedPlace)
+      .subscribe({
         next: (resData: any) => console.log(resData), })
+
+        this.destroyRef.onDestroy(() => {  // Cleanup logic when the component is destroyed
+        subscription.unsubscribe();
+    });
   }
+
 
 }

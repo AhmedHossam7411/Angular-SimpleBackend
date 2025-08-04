@@ -23,7 +23,12 @@ export class PlacesService {
     return this.fetchPlaces('http://localhost:3000/user-places', 'something went wrong while fetching favorite places')
   }
 
-  addPlaceToUserPlaces(place: Place) {}
+  addPlaceToUserPlaces(place: Place) 
+  {
+    return this.httpClient.put('http://localhost:3000/user-places', {
+        placeId: place.id,
+    });
+  }
 
   removeUserPlace(place: Place) {}
 
