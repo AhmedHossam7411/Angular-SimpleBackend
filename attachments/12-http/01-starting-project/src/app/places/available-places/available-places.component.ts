@@ -3,8 +3,10 @@ import { Component, DestroyRef, inject, signal } from '@angular/core';
 import { Place } from '../place.model';
 import { PlacesComponent } from '../places.component';
 import { PlacesContainerComponent } from '../places-container/places-container.component';
+import { PlacesService } from '../places.service';
+import { OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { catchError, map, throwError } from 'rxjs';
+
 
 @Component({
   selector: 'app-available-places',
@@ -20,24 +22,18 @@ export class AvailablePlacesComponent {
   error = signal(''); // Signal to track any error that occurs
   private httpClient= inject(HttpClient);  // Injecting HttpClient for making HTTP requests
   private destroyRef = inject(DestroyRef); // Injecting DestroyRef to manage component lifecycle
-
+  private placesService = inject(PlacesService); // Injecting PlacesService to access places data
   ngOnInit() // Lifecycle hook to fetch places when the component initializes
   {
     this.isFetching.set(true); // Setting fetching state to true before making the request
-    const subscription = this.httpClient.get<{places:Place[]}>('http://localhost:3000/places')
-    .pipe(  // Using RxJS pipe to transform the observable 
-      map((resData) => resData.places),catchError  
-      ((error) => 
-        throwError(()=> new Error(''))) // Handling errors and transforming the response
-      // Mapping the response to extract the places array
-      )
-      .subscribe({  // Subscribing to the observable to get the places data
-      next: (places) => {  // Handling the next value emitted by the observable
+    const subscription = this.placesService.loadAvailablePlaces()
+    .subscribe({  // Subscribing to the observable to get the places data
+      next: (places: Place[] | undefined) => {  // Handling the next value emitted by the observable
         
         this.places.set(places)  // Logging the places received from the server
       },
 
-      error: (error) => {
+      error: (error:Error) => {
         console.log(error); 
         this.error.set("something went wrong while fetching places");
          // Setting error message if an error occurs
@@ -58,7 +54,7 @@ export class AvailablePlacesComponent {
        this.httpClient.put('http://localhost:3000/user-places', {
         placeId: selectedPlace.id
       }).subscribe({
-        next: (resData) => console.log(resData), })
+        next: (resData: any) => console.log(resData), })
   }
 
 }
