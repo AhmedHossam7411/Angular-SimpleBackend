@@ -82,7 +82,9 @@ app.delete("/user-places/:id", async (req, res) => {
 
   res.status(200).json({ userPlaces: updatedUserPlaces });
 });
-
+app.get('/', (req, res) => {
+  res.send('hello');
+});
 // 404
 app.use((req, res, next) => {
   if (req.method === "OPTIONS") {

@@ -1,20 +1,39 @@
-import { Injectable, signal } from '@angular/core';
+import { inject, Injectable, signal } from '@angular/core';
 
 import { Place } from './place.model';
-
+import { map, catchError, throwError } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
 @Injectable({
   providedIn: 'root',
 })
 export class PlacesService {
+  httpClient = inject(HttpClient); // Injecting HttpClient for making HTTP requests
   private userPlaces = signal<Place[]>([]);
 
   loadedUserPlaces = this.userPlaces.asReadonly();
 
-  loadAvailablePlaces() {}
+  loadAvailablePlaces() 
+  {
+    this.fetchPlaces('http://localhost:3000/places', 'something went wrong while fetching places')
+  }
 
-  loadUserPlaces() {}
+  loadUserPlaces() 
+  {
+    this.fetchPlaces('http://localhost:3000/user-places', 'something went wrong while fetching favorite places')
+  }
 
   addPlaceToUserPlaces(place: Place) {}
 
   removeUserPlace(place: Place) {}
+
+  private fetchPlaces(url:string , errorMessage: string) {
+
+     this.httpClient.get<{places:Place[]}>(url)
+         .pipe(  
+           map((resData) => resData.places),catchError  
+           ((error) => 
+             throwError(()=> new Error(errorMessage))) 
+
+           )
+  }
 }

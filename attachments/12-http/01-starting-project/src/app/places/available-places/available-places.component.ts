@@ -14,6 +14,7 @@ import { catchError, map, throwError } from 'rxjs';
   imports: [PlacesComponent, PlacesContainerComponent],
 })
 export class AvailablePlacesComponent {
+
   places = signal<Place[] | undefined>(undefined);
   isFetching = signal(false); // Signal to track fetching state
   error = signal(''); // Signal to track any error that occurs
@@ -38,7 +39,7 @@ export class AvailablePlacesComponent {
 
       error: (error) => {
         console.log(error); 
-        this.error.set("something went wrong while fetching placesf");
+        this.error.set("something went wrong while fetching places");
          // Setting error message if an error occurs
       
         },  // Handling any error that occurs during the request
@@ -50,6 +51,14 @@ export class AvailablePlacesComponent {
     this.destroyRef.onDestroy(() => {  // Cleanup logic when the component is destroyed
         subscription.unsubscribe();
     });
+  }
+
+  onSelectPlace(selectedPlace: Place)
+  {
+       this.httpClient.put('http://localhost:3000/user-places', {
+        placeId: selectedPlace.id
+      }).subscribe({
+        next: (resData) => console.log(resData), })
   }
 
 }
