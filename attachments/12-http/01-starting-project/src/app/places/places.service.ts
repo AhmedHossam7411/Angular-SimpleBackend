@@ -4,6 +4,11 @@ import { Place } from './place.model';
 import { map, catchError, throwError, tap } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 
+/*This design here ====> 
+Keeps your service pure (no subscribe() here!)
+Lets the component control the subscription
+Automatically updates your signal, which the UI will react to*/
+
 @Injectable({
   providedIn: 'root',
 })
@@ -30,6 +35,8 @@ export class PlacesService {
 
   addPlaceToUserPlaces(place: Place) 
   {
+    this.userPlaces.update(prevPlaces => [...prevPlaces, place]); // updating UI immediately
+    
     return this.httpClient.put('http://localhost:3000/user-places', {
         placeId: place.id,
     });
