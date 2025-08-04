@@ -17,22 +17,21 @@ import { PlacesService } from '../places.service';
 })
 export class AvailablePlacesComponent {
 
-  places = signal<Place[] | undefined>(undefined);
+  //places = signal<Place[] | undefined>(undefined);
   isFetching = signal(false); // Signal to track fetching state
   error = signal(''); // Signal to track any error that occurs
   // private httpClient= inject(HttpClient);  // Injecting HttpClient for making HTTP requests
   private destroyRef = inject(DestroyRef); // Injecting DestroyRef to manage component lifecycle
   private placesService = inject(PlacesService); // Injecting PlacesService to access places data
+  places = this.placesService.loadedUserPlaces; // Accessing the loaded user places from the service
+  
+  
   ngOnInit() // Lifecycle hook to fetch places when the component initializes
   {
     this.isFetching.set(true); // Setting fetching state to true before making the request
     const subscription = this.placesService.loadAvailablePlaces()
     .subscribe({  // Subscribing to the observable to get the places data
-      next: (places: Place[] | undefined) => {  // Handling the next value emitted by the observable
-        
-        this.places.set(places)  // Logging the places received from the server
-      },
-
+     
       error: (error:Error) => {
         console.log(error); 
         this.error.set("something went wrong while fetching places");

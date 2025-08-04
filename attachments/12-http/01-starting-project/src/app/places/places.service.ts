@@ -1,7 +1,7 @@
 import { inject, Injectable, signal } from '@angular/core';
 
 import { Place } from './place.model';
-import { map, catchError, throwError } from 'rxjs';
+import { map, catchError, throwError, tap } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 
 @Injectable({
@@ -11,16 +11,21 @@ export class PlacesService {
   httpClient = inject(HttpClient); // Injecting HttpClient for making HTTP requests
   private userPlaces = signal<Place[]>([]);
 
-  loadedUserPlaces = this.userPlaces.asReadonly();
+  loadedUserPlaces = this.userPlaces.asReadonly();  // Accessing the loaded user places as a readonly signal
 
   loadAvailablePlaces() 
   {
-    return this.fetchPlaces('http://localhost:3000/places', 'something went wrong while fetching places')
+    return this.fetchPlaces('http://localhost:3000/places', 
+      'something went wrong while fetching places')
+       .pipe(tap({
+        next : (userPlaces) => this.userPlaces.set(userPlaces) // Updating the user places signal with the fetched data
+       }))
   }
 
   loadUserPlaces() 
   {
-    return this.fetchPlaces('http://localhost:3000/user-places', 'something went wrong while fetching favorite places')
+    return this.fetchPlaces('http://localhost:3000/user-places', 
+      'something went wrong while fetching favorite places')
   }
 
   addPlaceToUserPlaces(place: Place) 
