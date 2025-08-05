@@ -1,21 +1,54 @@
 import { afterNextRender, afterRender, Component, DestroyRef, inject, viewChild } from '@angular/core';
-import { FormsModule, NgForm, NgModel } from '@angular/forms';
+import { FormControl, FormGroup, FormsModule, NgForm, NgModel, ReactiveFormsModule, Validators } from '@angular/forms';
 import { debounceTime } from 'rxjs';
+
 
 @Component({
   selector: 'app-login',
-  imports: [FormsModule],
+  imports: [FormsModule,ReactiveFormsModule],
   standalone: true,
   templateUrl: './login.component.html',
   styleUrl: './login.component.css',
 })
-export class LoginComponent {
 
+// template forms ts  is commented out down here 
+export class LoginComponent {
+onSubmit() {
+   
+}
+     
+    form = new FormGroup({
+      email: new FormControl('',{
+        validators: [Validators.email, Validators.required]  
+      }),
+      password: new FormControl('',{
+        validators: [Validators.required, Validators.minLength(6)]
+
+      })
+    });
+
+    get emailIsInvalid(){
+      return (
+        this.form.controls.email.touched &&
+        this.form.controls.email.dirty &&
+        this.form.controls.email.invalid
+      );
+    }
+    get passwordIsInvalid(){
+      return (
+        this.form.controls.password.touched &&
+        this.form.controls.password.dirty &&
+        this.form.controls.password.invalid
+      );
+    }
+}
+
+  /* ----------------this is Template Forms---------------------- 
   private form = viewChild.required<NgForm>('form');
   private destroyRef = inject(DestroyRef);
-  /**
-   *
-   */
+  
+   
+   
   constructor() {
     afterNextRender(() => {
      const savedForm = window.localStorage.getItem('saved-login-form');
@@ -54,3 +87,5 @@ onSubmit(formData: NgForm) {
   formData.form.reset();  // reset after submitting
 }
 }
+*/
+

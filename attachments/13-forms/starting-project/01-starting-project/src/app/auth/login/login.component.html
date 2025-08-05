@@ -1,4 +1,38 @@
-<!--forms object created behind the scenes by angular , template driven approach-->
+<!-- this is the reactive Forms , Template form html is under this -->
+<form [formGroup]="form" (ngSubmit)="onSubmit()">
+  <h2>Login</h2>
+
+  <div class="control-row">
+    <div class="control no-margin">
+      <label for="email">Email</label>
+      <input id="email" type="email" [formControl]="form.controls.email" />
+    </div>
+
+    <div class="control no-margin">
+      <label for="password">Password</label>
+      <input id="password" type="password" />
+    </div>
+
+    <button class="button">Login</button>
+  </div>
+  @if(emailIsInvalid){
+  <p class="control-error">
+    Email is invalid , recheck please
+  </p>
+}
+  @if(passwordIsInvalid){
+  <p class="control-error">
+    Password is invalid , recheck please
+  </p>
+}
+</form>
+
+
+
+<!-- This is template Forms 
+
+
+ forms object created behind the scenes by angular , template driven approach
 <form #form="ngForm" (ngSubmit)="onSubmit(form)">  
   <h2>Login</h2>
 
@@ -11,7 +45,7 @@
       placeholder="Enter Email"
       #email="ngModel"  
 
-      /> <!--create a template variable that has ngModel as a type , to access this directly-->
+      /> create a template variable that has ngModel as a type , to access this directly
     </div>
 
     <div class="control no-margin">
@@ -36,4 +70,6 @@
     Invalid Password Detected , Please check your input
   </p>
 }
-</form>
+</form> 
+
+-->
