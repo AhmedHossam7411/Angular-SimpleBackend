@@ -15,7 +15,7 @@ import { PlacesService } from '../places.service';
 export class UserPlacesComponent {
     //places = signal<Place[] | undefined>(undefined);
     private placesService = inject(PlacesService); // Injecting PlacesService to access places data
-    places = this.placesService.loadedUserPlaces;
+    places = this.placesService.loadedUserFavoritePlaces;
     isFetching = signal(false); // Signal to track fetching state
     error = signal(''); // Signal to track any error that occurs
     // private httpClient= inject(HttpClient);  // Injecting HttpClient for making HTTP requests

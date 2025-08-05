@@ -16,9 +16,11 @@ Automatically updates your signal, which the UI will react to*/
 export class PlacesService {
 
   httpClient = inject(HttpClient); // Injecting HttpClient for making HTTP requests
-  userPlaces = signal<Place[]>([]);
   errorService = inject(ErrorService);
-  loadedUserPlaces = this.userPlaces.asReadonly();  // Accessing the loaded user places as a readonly signal
+   allPlaces = signal<Place[]>([]);
+   userFavoritePlaces = signal<Place[]>([]);
+   loadedAllPlaces = this.allPlaces.asReadonly();
+    loadedUserFavoritePlaces = this.userFavoritePlaces.asReadonly();
 
   loadAvailablePlaces() 
   {
@@ -26,7 +28,7 @@ export class PlacesService {
     return this.fetchPlaces('http://localhost:3000/places', 
       'something went wrong while fetching places')
        .pipe(tap({
-        next : (userPlaces) => this.userPlaces.set(userPlaces) // Updating the user places signal with the fetched data
+        next : (userPlaces) => this.allPlaces.set(userPlaces) // Updating the user places signal with the fetched data
        }))
   }
 
@@ -34,14 +36,17 @@ export class PlacesService {
   {
     return this.fetchPlaces('http://localhost:3000/user-places', 
       'something went wrong while fetching favorite places')
+      .pipe(tap({
+      next: (favorites) => this.userFavoritePlaces.set(favorites)
+    }));
   }
 
   addPlaceToUserPlaces(place: Place) 
   {
-    const prevPlaces = this.userPlaces();
+    const prevPlaces = this.userFavoritePlaces();
     
     if( !prevPlaces.some((p) => p.id === place.id)){  // improved optimistic updating
-      this.userPlaces.set([...prevPlaces, place]); // updating UI immediately
+      this.userFavoritePlaces.set([...prevPlaces, place]); // updating UI immediately
     }
     console.log('sending request');
     return this.httpClient.put('http://localhost:3000/user-places', {
@@ -50,7 +55,7 @@ export class PlacesService {
     .pipe(
       catchError((error) => {
         console.log('sss',error);
-        this.userPlaces.set(prevPlaces);
+        this.userFavoritePlaces.set(prevPlaces);
         this.errorService.showError('Failed to store selected place') // Error Service show Error
         return throwError(() => new Error('Failed to store selected place'))  
       })
@@ -59,11 +64,13 @@ export class PlacesService {
 
   removeUserPlace(place: Place) 
   {
-    const prevPlaces = this.userPlaces();
+    const prevPlaces = this.userFavoritePlaces();
     
-    if( prevPlaces.some((p) => p.id === place.id)){  // improved optimistic updating
-      this.userPlaces.set([...prevPlaces, place]); // updating UI immediately
-    }
+    if (prevPlaces.some((p) => p.id === place.id)) {
+  const updatedPlaces = prevPlaces.filter((p) => p.id !== place.id); // ✅ remove the item
+  this.userFavoritePlaces.set(updatedPlaces); // update signal
+     }
+
     console.log('sending request');
     return this.httpClient.put('http://localhost:3000/user-places/'+ place.id ,{
         placeId: place.id,
@@ -71,7 +78,7 @@ export class PlacesService {
     .pipe(
       catchError((error) => {
         console.log('sss',error);
-        this.userPlaces.set(prevPlaces);
+        this.userFavoritePlaces.set(prevPlaces);
         this.errorService.showError('Failed to delete selected place') // Error Service show Error
         return throwError(() => new Error('Failed to delete selected place'))  
       })

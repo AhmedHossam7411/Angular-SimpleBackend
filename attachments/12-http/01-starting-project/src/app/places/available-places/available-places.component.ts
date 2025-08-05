@@ -23,7 +23,7 @@ export class AvailablePlacesComponent {
   // private httpClient= inject(HttpClient);  // Injecting HttpClient for making HTTP requests
   private destroyRef = inject(DestroyRef); // Injecting DestroyRef to manage component lifecycle
   private placesService = inject(PlacesService); // Injecting PlacesService to access places data
-  places = this.placesService.loadedUserPlaces; // Accessing the loaded user places from the service
+  places = this.placesService.loadedAllPlaces; // Accessing the loaded user places from the service
   
   
   ngOnInit() // Lifecycle hook to fetch places when the component initializes
