@@ -8,7 +8,9 @@
       <input id="email" type="email" name="email" 
       ngModel 
       required email 
+      placeholder="Enter Email"
       #email="ngModel"  
+
       /> <!--create a template variable that has ngModel as a type , to access this directly-->
     </div>
 
@@ -17,6 +19,7 @@
       <input id="password" type="password" name="password" ngModel
       required 
       minlength="6" maxlength="15"
+      placeholder="Enter Password"
       #password="ngModel"
       />
     </div>
