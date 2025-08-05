@@ -28,7 +28,7 @@ export class PlacesService {
     return this.fetchPlaces('http://localhost:3000/places', 
       'something went wrong while fetching places')
        .pipe(tap({
-        next : (userPlaces) => this.allPlaces.set(userPlaces) // Updating the user places signal with the fetched data
+        next : (allPlaces) => this.allPlaces.set(allPlaces) // Updating the user places signal with the fetched data
        }))
   }
 
@@ -66,18 +66,18 @@ export class PlacesService {
   {
     const prevPlaces = this.userFavoritePlaces();
     
-    if (prevPlaces.some((p) => p.id === place.id)) {
-  const updatedPlaces = prevPlaces.filter((p) => p.id !== place.id); // ✅ remove the item
-  this.userFavoritePlaces.set(updatedPlaces); // update signal
+     if (prevPlaces.some((p) => p.id === place.id)) {
+     const updatedPlaces = prevPlaces.filter((p) => p.id !== place.id); 
+     this.userFavoritePlaces.set(updatedPlaces); // update signal
      }
 
     console.log('sending request');
-    return this.httpClient.put('http://localhost:3000/user-places/'+ place.id ,{
+    return this.httpClient.put(`http://localhost:3000/user-places/${place.id}` ,{
         placeId: place.id,
     })
     .pipe(
       catchError((error) => {
-        console.log('sss',error);
+        console.log(error);
         this.userFavoritePlaces.set(prevPlaces);
         this.errorService.showError('Failed to delete selected place') // Error Service show Error
         return throwError(() => new Error('Failed to delete selected place'))  
