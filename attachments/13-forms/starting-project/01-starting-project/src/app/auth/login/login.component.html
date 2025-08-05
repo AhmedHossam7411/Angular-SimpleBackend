@@ -23,12 +23,12 @@
 
     <button class="button">Login</button>
   </div>
-  @if (password.touched && form.form.invalid) {
+  @if (password.touched && email.dirty && email.invalid) {
   <p class="control-error">
     Invalid Email Detected , Please check your input
   </p>
   }
-  @if (password.touched && form.form.invalid) {
+  @if (password.touched && email.dirty && email.invalid) {
   <p class="control-error">
     Invalid Password Detected , Please check your input
   </p>
