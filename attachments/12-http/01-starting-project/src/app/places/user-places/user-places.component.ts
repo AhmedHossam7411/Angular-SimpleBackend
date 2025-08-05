@@ -13,19 +13,21 @@ import { PlacesService } from '../places.service';
   imports: [PlacesContainerComponent, PlacesComponent],
 })
 export class UserPlacesComponent {
-  places = signal<Place[] | undefined>(undefined);
+    //places = signal<Place[] | undefined>(undefined);
+    private placesService = inject(PlacesService); // Injecting PlacesService to access places data
+    places = this.placesService.loadedUserPlaces;
     isFetching = signal(false); // Signal to track fetching state
     error = signal(''); // Signal to track any error that occurs
     // private httpClient= inject(HttpClient);  // Injecting HttpClient for making HTTP requests
     private destroyRef = inject(DestroyRef); // Injecting DestroyRef to manage component lifecycle
-    private placesService = inject(PlacesService); // Injecting PlacesService to access places data
     
     ngOnInit() // Lifecycle hook to fetch places when the component initializes
     {
       this.isFetching.set(true); // Setting fetching state to true before making the request
       const subscription = this.placesService.loadUserPlaces().subscribe({  // Subscribing to the observable to get the places data
         next: (places) => {
-            this.places.set(places)  // Logging the places received from the server
+        //console.log(places)
+          //this.places.set(places)  // Logging the places received from the server
         },
         error: (error: Error) => {
            
@@ -41,6 +43,15 @@ export class UserPlacesComponent {
       this.destroyRef.onDestroy(() => {  // Cleanup logic when the component is destroyed
           subscription.unsubscribe();
       });
+    }
+
+    onRemovePlace(place : Place)
+    {
+      const subscription = this.placesService.removeUserPlace(place).subscribe();
+
+      this.destroyRef.onDestroy(() => {
+        subscription.unsubscribe();
+      })
     }
   
 }

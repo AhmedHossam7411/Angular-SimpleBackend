@@ -28,12 +28,13 @@ export class AvailablePlacesComponent {
   
   ngOnInit() // Lifecycle hook to fetch places when the component initializes
   {
+    console.log("any1");
     this.isFetching.set(true); // Setting fetching state to true before making the request
     const subscription = this.placesService.loadAvailablePlaces()
     .subscribe({  // Subscribing to the observable to get the places data
      
       error: (error:Error) => {
-        console.log(error); 
+        console.log(error); console.log("any1"); 
         this.error.set("something went wrong while fetching places");
          // Setting error message if an error occurs
       
@@ -46,10 +47,12 @@ export class AvailablePlacesComponent {
     this.destroyRef.onDestroy(() => {  // Cleanup logic when the component is destroyed
         subscription.unsubscribe();
     });
+    console.log("any1");
   }
 
   onSelectPlace(selectedPlace: Place)
   {
+    console.log('selevted place',selectedPlace); console.log("any1");
        const subscription=this.placesService.addPlaceToUserPlaces(selectedPlace)
       .subscribe({
         next: (resData: any) => console.log(resData), })
