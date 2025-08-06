@@ -2,7 +2,7 @@ import { afterNextRender, afterRender, Component, DestroyRef, inject, viewChild 
 import { AbstractControl, FormControl, FormGroup, FormsModule, NgForm, NgModel, ReactiveFormsModule, Validators } from '@angular/forms';
 import { debounceTime } from 'rxjs';
 
-function mustContainQuestionMark(control: AbstractControl)
+export function mustContainQuestionMark(control: AbstractControl)
 {
   if(control.value.includes('?')){
     return null;
@@ -38,8 +38,9 @@ if(savedForm)
 // template forms ts  is commented out down here 
 export class LoginComponent {
 onSubmit() {
-   
+   console.log(this.form);
 }
+
      
     form = new FormGroup({
       email: new FormControl(initialEmailValue,{ 
