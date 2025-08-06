@@ -10,7 +10,7 @@
 
     <div class="control no-margin">
       <label for="password">Password</label>
-      <input id="password" type="password" />
+      <input id="password" type="password" [formControl]="form.controls.password" />
     </div>
 
     <button class="button">Login</button>
@@ -22,7 +22,7 @@
 }
   @if(passwordIsInvalid){
   <p class="control-error">
-    Password is invalid , recheck please
+    Password is invalid , recheck please , 6 characters atleast and a Question Mark 
   </p>
 }
 </form>

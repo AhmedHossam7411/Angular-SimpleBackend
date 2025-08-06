@@ -1,7 +1,31 @@
 import { afterNextRender, afterRender, Component, DestroyRef, inject, viewChild } from '@angular/core';
-import { FormControl, FormGroup, FormsModule, NgForm, NgModel, ReactiveFormsModule, Validators } from '@angular/forms';
+import { AbstractControl, FormControl, FormGroup, FormsModule, NgForm, NgModel, ReactiveFormsModule, Validators } from '@angular/forms';
 import { debounceTime } from 'rxjs';
 
+function mustContainQuestionMark(control: AbstractControl)
+{
+  if(control.value.includes('?')){
+    return null;
+  }
+  return { mustContainQuestionMark: true }; // invalid
+}
+
+function emailIsUnique(control: AbstractControl)
+{
+  if(control.value === 'test@example.com')
+  {
+    return { emailIsUnique: true }
+  }
+  return null;
+}
+let initialEmailValue = '';
+const savedForm = window.localStorage.getItem('saved-login-form');
+
+if(savedForm)
+{
+  const loadedForm = JSON.parse(savedForm);
+  initialEmailValue = loadedForm.email;
+}
 
 @Component({
   selector: 'app-login',
@@ -18,13 +42,12 @@ onSubmit() {
 }
      
     form = new FormGroup({
-      email: new FormControl('',{
-        validators: [Validators.email, Validators.required]  
+      email: new FormControl(initialEmailValue,{ 
+        validators: [Validators.email, Validators.required,emailIsUnique]  
       }),
-      password: new FormControl('',{
-        validators: [Validators.required, Validators.minLength(6)]
-
-      })
+      password: new FormControl({
+        validators: [Validators.required, Validators.minLength(6),mustContainQuestionMark],
+       }),
     });
 
     get emailIsInvalid(){
